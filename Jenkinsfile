@@ -4,11 +4,9 @@ pipeline {
   stages {
     stage('Switch Role') {
       steps {
-	- echo Build completed on `date`
-	- TEMP_ROLE=$(aws sts assume-role --role-arn arn:aws:iam::327173749814:role/cloudformation --role-session-name test)
-	- export TEMP_ROLE"
-	- export AWS_ACCESS_KEY_ID=$(echo "${TEMP_ROLE}" | jq -r '.Credentials.AccessKeyId')
-	- echo $AWS_ACCESS_KEY_ID
+        sh 'TEMP_ROLE=$(aws sts assume-role --role-arn arn:aws:iam::327173749814:role/cloudformation --role-session-name test)'
+	sh 'export TEMP_ROLE'
+	sh 'echo $TEMP_ROLE'
       }
     }
     stage('Validate') {
