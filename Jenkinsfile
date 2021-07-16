@@ -4,7 +4,7 @@ pipeline {
   stages {
     stage('Validate') {
       steps {
-        sh "aws cloudformation validate-template --template-body file://VPC/vpc-all-with-no-configuration-parameters.json"
+        sh "aws cloudformation validate-template --template-body file://VPC/vpc-all-with-no-configuration-parameters.json --region 'ap-southeast-1'"
       }
     }
     
