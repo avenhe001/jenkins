@@ -6,7 +6,10 @@ pipeline {
       steps {
         sh 'TEMP_ROLE=$(aws sts assume-role --role-arn arn:aws:iam::327173749814:role/cloudformation --role-session-name test)'
 	sh 'export TEMP_ROLE'
-	sh 'echo $TEMP_ROLE'
+	sh 'echo TEMP_ROLE'
+	sh 'export AWS_ACCESS_KEY_ID=$(echo "${TEMP_ROLE}" | jq -r ".Credentials.AccessKeyId")'
+	sh 'echo AWS_ACCESS_KEY_ID'
+	sh "aws cloudformation validate-template --template-body file://VPC/vpc-all-with-no-configuration-parameters.json --region 'ap-southeast-1'"
       }
     }
     stage('Validate') {
