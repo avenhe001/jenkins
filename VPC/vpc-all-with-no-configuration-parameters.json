@@ -573,7 +573,7 @@
       "Type": "AWS::EC2::Subnet",
       "Properties": {
         "CidrBlock": "172.1.6.0/23",
-        "AvailabilityZone": "ap-northeast-1c",
+        "AvailabilityZone": "ap-southeast-1c",
         "VpcId": {
           "Ref": "vpc0d271617fab0d361c"
         },
@@ -589,7 +589,7 @@
       "Type": "AWS::EC2::Subnet",
       "Properties": {
         "CidrBlock": "172.1.2.0/23",
-        "AvailabilityZone": "ap-northeast-1c",
+        "AvailabilityZone": "ap-southeast-1c",
         "VpcId": {
           "Ref": "vpc0d271617fab0d361c"
         },
@@ -605,7 +605,7 @@
       "Type": "AWS::EC2::Subnet",
       "Properties": {
         "CidrBlock": "172.1.0.0/23",
-        "AvailabilityZone": "ap-northeast-1a",
+        "AvailabilityZone": "ap-southeast-1a",
         "VpcId": {
           "Ref": "vpc0d271617fab0d361c"
         },
@@ -621,7 +621,7 @@
       "Type": "AWS::EC2::Subnet",
       "Properties": {
         "CidrBlock": "172.1.10.0/23",
-        "AvailabilityZone": "ap-northeast-1c",
+        "AvailabilityZone": "ap-southeast-1c",
         "VpcId": {
           "Ref": "vpc0d271617fab0d361c"
         },
@@ -637,7 +637,7 @@
       "Type": "AWS::EC2::Subnet",
       "Properties": {
         "CidrBlock": "172.1.8.0/23",
-        "AvailabilityZone": "ap-northeast-1a",
+        "AvailabilityZone": "ap-southeast-1a",
         "VpcId": {
           "Ref": "vpc0d271617fab0d361c"
         },
@@ -653,7 +653,7 @@
       "Type": "AWS::EC2::Subnet",
       "Properties": {
         "CidrBlock": "172.1.4.0/23",
-        "AvailabilityZone": "ap-northeast-1a",
+        "AvailabilityZone": "ap-southeast-1a",
         "VpcId": {
           "Ref": "vpc0d271617fab0d361c"
         },
@@ -668,7 +668,7 @@
     "dopt73a38114": {
       "Type": "AWS::EC2::DHCPOptions",
       "Properties": {
-        "DomainName": "ap-northeast-1.compute.internal",
+        "DomainName": "ap-southeast-1.compute.internal",
         "DomainNameServers": [
           "AmazonProvidedDNS"
         ]
