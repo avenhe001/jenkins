@@ -1,0 +1,241 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Parameters": {
+        "IGDescription": {
+            "Description": "IGDescription",
+            "Type": "String",
+	    "Default": "agilent-aws-tst-26-kakao-vpc-internet-gateway",
+            "ConstraintDescription": "IGDescription."
+        },
+        "RoutePrivateCDescription": {
+            "Description": "RoutetablePrivateCDescription",
+            "Type": "String",
+	    "Default": "agilent-aws-tst-26-kakao-route-private-c",
+            "ConstraintDescription": "RoutetablePrivateCDescription."
+        },
+        "SubnetPrivateCId": {
+            "Type": "AWS::EC2::Subnet::Id",
+            "Description": "SubNetPrivateC"
+        },
+        "RoutePrivateADescription": {
+            "Description": "RoutePrivateADescription",
+            "Type": "String",
+	    "Default": "agilent-aws-tst-26-kakao-route-private-a",
+            "ConstraintDescription": "RoutePrivateADescription."
+        },
+        "SubnetPrivateAId": {
+            "Type": "AWS::EC2::Subnet::Id",
+            "Description": "SubNetPrivateA."
+        },
+        "RoutePublicDescription": {
+            "Description": "RoutePublicDescription",
+            "Type": "String",
+	    "Default": "agilent-aws-tst-26-kakao-route-public",
+            "ConstraintDescription": "RoutePublicDescription."
+        },
+        "SubnetPublicAId": {
+            "Type": "AWS::EC2::Subnet::Id",
+            "Description": "SubnetPublicAId."
+        },
+        "SubnetPublicCId": {
+            "Type": "AWS::EC2::Subnet::Id",
+            "Description": "SubnetPublicCId."
+        },
+        "NatgatewaypublicADescription": {
+            "Description": "NatgatewaypublicADescription",
+            "Type": "String",
+	    "Default": "agilent-aws-tst-26-kakao-natgateway-public-a",
+            "ConstraintDescription": "NatgatewaypublicADescription."
+        },
+        "NatgatewaypublicCDescription": {
+            "Description": "NatgatewaypublicCDescription",
+            "Type": "String",
+	    "Default": "agilent-aws-tst-26-kakao-natgateway-public-c",
+            "ConstraintDescription": "NatgatewaypublicCDescription."
+        },
+        "VpcId": {
+	    "Type": "AWS::EC2::VPC::Id",
+	    "Description": "Select a VPC that allows instances to access the Internet. Select same VPC in which LoadBalancer was created."
+	}
+  },
+
+  "Resources": {
+      "eip3114182206": {
+      "Type": "AWS::EC2::EIP",
+      "Properties": {
+        "Domain": "vpc"
+      }
+    },
+    "natgatewaypublica": {
+      "Type" : "AWS::EC2::NatGateway",
+      "Properties" : {
+        "AllocationId" : { "Fn::GetAtt" : ["eip3114182206", "AllocationId"]},
+        "SubnetId" : {
+          "Ref": "SubnetPublicAId"
+        },
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": {"Ref": "NatgatewaypublicADescription"}
+          }
+        ]      
+      }
+    },
+    "eip54646158": {
+      "Type": "AWS::EC2::EIP",
+      "Properties": {
+        "Domain": "vpc"
+      }
+    },
+    "natgatewaypublicc": {
+      "Type" : "AWS::EC2::NatGateway",
+      "Properties" : {
+        "AllocationId" :  { "Fn::GetAtt" : ["eip54646158", "AllocationId"]},
+        "SubnetId" : {
+          "Ref": "SubnetPublicCId"
+        },
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": {"Ref": "NatgatewaypublicCDescription"}
+          }
+        ]      
+      }
+    },
+    "igw0a943f09f6dfee371": {
+      "Type": "AWS::EC2::InternetGateway",
+      "Properties": {
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": {"Ref": "IGDescription"}
+          }
+        ]
+      }
+    },
+    "gw5": {
+      "Type": "AWS::EC2::VPCGatewayAttachment",
+      "Properties": {
+        "VpcId": {"Ref": "VpcId"},
+        "InternetGatewayId": {
+          "Ref": "igw0a943f09f6dfee371"
+        }
+      }
+    },
+    "rtb012558b4e74041452": {
+      "Type": "AWS::EC2::RouteTable",
+      "Properties": {
+        "VpcId": {"Ref": "VpcId"},
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": {"Ref": "RoutePrivateADescription"}
+          }
+        ]
+      }
+    },
+    "rtb0e87bd1b57cc479d9": {
+      "Type": "AWS::EC2::RouteTable",
+      "Properties": {
+        "VpcId": {"Ref": "VpcId"},
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": {"Ref": "RoutePrivateCDescription"}
+          }
+        ]
+      }
+    },
+    "rtb0301e911b2c4ac689": {
+      "Type": "AWS::EC2::RouteTable",
+      "Properties": {
+        "VpcId": {"Ref": "VpcId"}
+      }
+    },
+    "rtb045e4ea1c008560d2": {
+      "Type": "AWS::EC2::RouteTable",
+      "Properties": {
+        "VpcId": {"Ref": "VpcId"},
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": {"Ref": "RoutePublicDescription"}
+          }
+        ]
+      }
+    },
+    "subnetroute24": {
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties": {
+        "RouteTableId": {
+          "Ref": "rtb012558b4e74041452"
+        },
+        "SubnetId": {"Ref": "SubnetPrivateAId"}
+      }
+    },
+    "subnetroute25": {
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties": {
+        "RouteTableId": {
+          "Ref": "rtb0e87bd1b57cc479d9"
+        },
+        "SubnetId": {"Ref": "SubnetPrivateCId"}
+      }
+    },
+    "subnetroute27": {
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties": {
+        "RouteTableId": {
+          "Ref": "rtb045e4ea1c008560d2"
+        },
+        "SubnetId": {"Ref": "SubnetPublicAId"}
+      }
+    },
+    "subnetroute28": {
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties": {
+        "RouteTableId": {
+          "Ref": "rtb045e4ea1c008560d2"
+        },
+        "SubnetId": {"Ref": "SubnetPublicCId"}
+      }
+    },
+    "route15": {
+      "Type": "AWS::EC2::Route",
+      "Properties": {
+        "DestinationCidrBlock": "0.0.0.0/0",
+        "RouteTableId": {
+          "Ref": "rtb012558b4e74041452"
+        },
+        "NatGatewayId": {
+          "Ref": "natgatewaypublica"
+        }
+      }
+    },
+    "route16": {
+      "Type": "AWS::EC2::Route",
+      "Properties": {
+        "DestinationCidrBlock": "0.0.0.0/0",
+        "RouteTableId": {
+          "Ref": "rtb0e87bd1b57cc479d9"
+        },
+        "NatGatewayId": {
+          "Ref": "natgatewaypublicc"
+        }
+      }
+    },
+    "route17": {
+      "Type": "AWS::EC2::Route",
+      "Properties": {
+        "DestinationCidrBlock": "0.0.0.0/0",
+        "RouteTableId": {
+          "Ref": "rtb045e4ea1c008560d2"
+        },
+        "GatewayId": {
+          "Ref": "igw0a943f09f6dfee371"
+        }
+      },
+      "DependsOn": "gw5"
+    }
+  }
+}

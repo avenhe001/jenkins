@@ -3,7 +3,7 @@ pipeline {
     stages {
         stage('Submit Stack') {
             steps {
-            sh "aws cloudformation create-stack --stack-name s3testforaven --template-body file://S3/clf-stg-kakao-s3-bucket.json --region 'ap-southeast-1'"
+            sh "aws cloudformation create-stack --stack-name vpctestforaven --template-body file://VPC/vpc-all-with-no-configuration-parameters.json --region 'ap-southeast-1'"
               }
              }
             }

@@ -1,0 +1,181 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Parameters": {
+        "VpcName": {
+            "Description": "Agilent VPC for WeChat Kakao",
+            "Type": "String",
+	    "Default": "agilent-aws-tst-26-kakao-vpc",
+            "ConstraintDescription": "VpcName."
+        },
+        "DBSubNetC": {
+            "Description": "DBSubNetC",
+            "Type": "String",
+	    "Default": "agilent-aws-tst-26-kakao-subnet-db-c",
+            "ConstraintDescription": "DBSubNetC."
+        },
+        "DBSubNetA": {
+            "Description": "DBSubNetA",
+            "Type": "String",
+	    "Default": "agilent-aws-tst-26-kakao-subnet-db-a",
+            "ConstraintDescription": "DBSubNetA."
+        },
+        "SubNetPrivateC": {
+            "Description": "SubNetPrivateC",
+            "Type": "String",
+	    "Default": "agilent-aws-tst-26-kakao-subnet-private-c",
+            "ConstraintDescription": "SubNetPrivateC."
+        },
+        "SubNetPrivateA": {
+            "Description": "SubNetPrivateA",
+            "Type": "String",
+	    "Default": "agilent-aws-tst-26-kakao-subnet-private-a",
+            "ConstraintDescription": "SubNetPrivateA."
+        },
+        "SubNetPublicC": {
+            "Description": "SubNetPublicC",
+            "Type": "String",
+	    "Default": "agilent-aws-tst-26-kakao-subnet-public-c",
+            "ConstraintDescription": "SubNetPublicC."
+        },
+        "SubNetPublicA": {
+            "Description": "SubNetPublicA",
+            "Type": "String",
+	    "Default": "agilent-aws-tst-26-kakao-subnet-public-a",
+            "ConstraintDescription": "SubNetPublicA."
+        }
+  },
+
+  "Resources": {
+    "vpc0d271617fab0d361c": {
+      "Type": "AWS::EC2::VPC",
+      "Properties": {
+        "CidrBlock": "172.1.0.0/16",
+        "InstanceTenancy": "default",
+        "EnableDnsSupport": "true",
+        "EnableDnsHostnames": "true",
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": {"Ref": "VpcName"}
+          }
+        ]
+      }
+    },
+    "subnet0901b689997df454c": {
+      "Type": "AWS::EC2::Subnet",
+      "Properties": {
+        "CidrBlock": "172.1.6.0/23",
+        "AvailabilityZone": "ap-northeast-1c",
+        "VpcId": {
+          "Ref": "vpc0d271617fab0d361c"
+        },
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": {"Ref": "SubNetPrivateC"}
+          }
+        ]
+      }
+    },
+    "dbsubnetc": {
+      "Type": "AWS::EC2::Subnet",
+      "Properties": {
+        "CidrBlock": "172.1.10.0/23",
+        "AvailabilityZone": "ap-northeast-1c",
+        "VpcId": {
+          "Ref": "vpc0d271617fab0d361c"
+        },
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": {"Ref": "DBSubNetC"}
+          }
+        ]
+      }
+    },
+    "dbsubneta": {
+      "Type": "AWS::EC2::Subnet",
+      "Properties": {
+        "CidrBlock": "172.1.8.0/23",
+        "AvailabilityZone": "ap-northeast-1a",
+        "VpcId": {
+          "Ref": "vpc0d271617fab0d361c"
+        },
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": {"Ref": "DBSubNetA"}
+          }
+        ]
+      }
+    },
+    "subnet0ade43a47a71b78ca": {
+      "Type": "AWS::EC2::Subnet",
+      "Properties": {
+        "CidrBlock": "172.1.2.0/23",
+        "AvailabilityZone": "ap-northeast-1c",
+        "VpcId": {
+          "Ref": "vpc0d271617fab0d361c"
+        },
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": {"Ref": "SubNetPublicC"}
+          }
+        ]
+      }
+    },
+    "subnet07e3c16d0ef80d997": {
+      "Type": "AWS::EC2::Subnet",
+      "Properties": {
+        "CidrBlock": "172.1.0.0/23",
+        "AvailabilityZone": "ap-northeast-1a",
+        "VpcId": {
+          "Ref": "vpc0d271617fab0d361c"
+        },
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": {"Ref": "SubNetPublicA"}
+          }
+        ]
+      }
+    },
+    "subnet0c53e820e991bc8bc": {
+      "Type": "AWS::EC2::Subnet",
+      "Properties": {
+        "CidrBlock": "172.1.4.0/23",
+        "AvailabilityZone": "ap-northeast-1a",
+        "VpcId": {
+          "Ref": "vpc0d271617fab0d361c"
+        },
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": {"Ref": "SubNetPrivateA"}
+          }
+        ]
+      }
+    },
+    "dopt73a38114": {
+      "Type": "AWS::EC2::DHCPOptions",
+      "Properties": {
+        "DomainName": "ap-northeast-1.compute.internal",
+        "DomainNameServers": [
+          "AmazonProvidedDNS"
+        ]
+      }
+    },
+    "dchpassoc7": {
+      "Type": "AWS::EC2::VPCDHCPOptionsAssociation",
+      "Properties": {
+        "VpcId": {
+          "Ref": "vpc0d271617fab0d361c"
+        },
+        "DhcpOptionsId": {
+          "Ref": "dopt73a38114"
+        }
+      }
+    }
+  }
+}

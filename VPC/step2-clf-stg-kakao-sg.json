@@ -1,0 +1,283 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Parameters": {
+        "SGAuroraGroupDescription": {
+            "Description": "SGAuroraGroupDescription",
+            "Type": "String",
+	    "Default": "agilent-aws-tst-26-kakao-sg-aurora",
+            "ConstraintDescription": "SGAuroraGroupDescription."
+        },
+        "SGRedisGroupDescription": {
+            "Description": "SGRedisGroupDescription",
+            "Type": "String",
+	    "Default": "agilent-aws-tst-26-kakao-sg-redis",
+            "ConstraintDescription": "SGRedisGroupDescription."
+        },
+        "SGECSGroupDescription": {
+            "Description": "SGECSGroupDescription",
+            "Type": "String",
+	    "Default": "agilent-aws-tst-26-kakao-sg-ecs",
+            "ConstraintDescription": "SGECSGroupDescription."
+        },
+        "SGELBGroupDescription": {
+            "Description": "SGELBGroupDescription",
+            "Type": "String",
+	    "Default": "agilent-aws-tst-26-kakao-sg-elb",
+            "ConstraintDescription": "SGELBGroupDescription."
+        },
+        "VpcId": {
+	    "Type": "AWS::EC2::VPC::Id",
+	    "Description": "Select a VPC that allows instances to access the Internet. Select same VPC in which LoadBalancer was created."
+	}
+  },
+  "Resources": {
+    "sgkakaoeserviceaurora": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "Properties": {
+        "GroupDescription": {"Ref": "SGAuroraGroupDescription"},
+        "GroupName": {"Ref": "SGAuroraGroupDescription"},
+        "VpcId": {"Ref": "VpcId"},
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": {"Ref": "SGAuroraGroupDescription"}
+          }
+        ]
+      }
+    },
+    "sgkakaoeserviceelb": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "Properties": {
+        "GroupDescription": {"Ref": "SGELBGroupDescription"},
+	"GroupName" : {"Ref": "SGELBGroupDescription"},
+        "VpcId": {"Ref": "VpcId"},
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": {"Ref": "SGELBGroupDescription"}
+          }
+        ]
+      }
+    },
+    "sgkakaoeserviceecs": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "Properties": {
+        "GroupDescription": {"Ref": "SGECSGroupDescription"},
+	"GroupName" : {"Ref": "SGECSGroupDescription"},
+        "VpcId": {"Ref": "VpcId"},
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": {"Ref": "SGECSGroupDescription"}
+          }
+        ]
+      }
+    },
+    "sgkakaoeserviceredis": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "Properties": {
+        "GroupDescription": {"Ref": "SGRedisGroupDescription"},
+        "GroupName": {"Ref": "SGRedisGroupDescription"},
+        "VpcId": {"Ref": "VpcId"},
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": {"Ref": "SGRedisGroupDescription"}
+          }
+        ]
+      }
+    },
+    "ingress28": {
+      "Type": "AWS::EC2::SecurityGroupIngress",
+      "Properties": {
+        "GroupId": {
+          "Ref": "sgkakaoeserviceaurora"
+        },
+        "IpProtocol": "tcp",
+        "FromPort": "3306",
+        "ToPort": "3306",
+        "CidrIp": "172.1.4.0/23"
+      }
+    },
+    "ingress29": {
+      "Type": "AWS::EC2::SecurityGroupIngress",
+      "Properties": {
+        "GroupId": {
+          "Ref": "sgkakaoeserviceaurora"
+        },
+        "IpProtocol": "tcp",
+        "FromPort": "3306",
+        "ToPort": "3306",
+        "CidrIp": "172.1.6.0/23"
+      }
+    },
+    "ingress30": {
+      "Type": "AWS::EC2::SecurityGroupIngress",
+      "Properties": {
+        "GroupId": {
+          "Ref": "sgkakaoeserviceelb"
+        },
+        "IpProtocol": "tcp",
+        "FromPort": "80",
+        "ToPort": "80",
+        "CidrIp": "0.0.0.0/0"
+      }
+    },
+    "ingress31": {
+      "Type": "AWS::EC2::SecurityGroupIngress",
+      "Properties": {
+        "GroupId": {
+          "Ref": "sgkakaoeserviceecs"
+        },
+        "IpProtocol": "tcp",
+        "FromPort": "19900",
+        "ToPort": "19999",
+        "CidrIp": "172.1.4.0/23"
+      }
+    },
+    "ingress32": {
+      "Type": "AWS::EC2::SecurityGroupIngress",
+      "Properties": {
+        "GroupId": {
+          "Ref": "sgkakaoeserviceecs"
+        },
+        "IpProtocol": "tcp",
+        "FromPort": "19900",
+        "ToPort": "19999",
+        "CidrIp": "172.1.6.0/23"
+      }
+    },
+    "ingress39": {
+      "Type": "AWS::EC2::SecurityGroupIngress",
+      "Properties": {
+        "GroupId": {
+          "Ref": "sgkakaoeserviceecs"
+        },
+        "IpProtocol": "tcp",
+        "FromPort": "443",
+        "ToPort": "443",
+        "CidrIp": "172.1.0.0/23"
+      }
+    },
+    "ingress390": {
+      "Type": "AWS::EC2::SecurityGroupIngress",
+      "Properties": {
+        "GroupId": {
+          "Ref": "sgkakaoeserviceecs"
+        },
+        "IpProtocol": "tcp",
+        "FromPort": "443",
+        "ToPort": "443",
+        "CidrIp": "172.1.2.0/23"
+      }
+    },
+    "ingress33": {
+      "Type": "AWS::EC2::SecurityGroupIngress",
+      "Properties": {
+        "GroupId": {
+          "Ref": "sgkakaoeserviceelb"
+        },
+        "IpProtocol": "tcp",
+        "FromPort": "443",
+        "ToPort": "443",
+        "CidrIp": "0.0.0.0/0"
+      }
+    },
+    "ingress330": {
+      "Type": "AWS::EC2::SecurityGroupIngress",
+      "Properties": {
+        "GroupId": {
+          "Ref": "sgkakaoeserviceelb"
+        },
+        "IpProtocol": "tcp",
+        "FromPort": "8443",
+        "ToPort": "8443",
+        "CidrIp": "0.0.0.0/0"
+      }
+    },
+    "ingress34": {
+      "Type": "AWS::EC2::SecurityGroupIngress",
+      "Properties": {
+        "GroupId": {
+          "Ref": "sgkakaoeserviceredis"
+        },
+        "IpProtocol": "tcp",
+        "FromPort": "6379",
+        "ToPort": "6379",
+        "CidrIp": "172.1.4.0/23"
+      }
+    },
+    "ingress35": {
+      "Type": "AWS::EC2::SecurityGroupIngress",
+      "Properties": {
+        "GroupId": {
+          "Ref": "sgkakaoeserviceredis"
+        },
+        "IpProtocol": "tcp",
+        "FromPort": "6379",
+        "ToPort": "6379",
+        "CidrIp": "172.1.6.0/23"
+      }
+    },
+    "egress20": {
+      "Type": "AWS::EC2::SecurityGroupEgress",
+      "Properties": {
+        "GroupId": {
+          "Ref": "sgkakaoeserviceaurora"
+        },
+        "IpProtocol": "-1",
+        "CidrIp": "172.1.4.0/23"
+      }
+    },
+    "egress21": {
+      "Type": "AWS::EC2::SecurityGroupEgress",
+      "Properties": {
+        "GroupId": {
+          "Ref": "sgkakaoeserviceaurora"
+        },
+        "IpProtocol": "-1",
+        "CidrIp": "172.1.6.0/23"
+      }
+    },
+    "egress22": {
+      "Type": "AWS::EC2::SecurityGroupEgress",
+      "Properties": {
+        "GroupId": {
+          "Ref": "sgkakaoeserviceredis"
+        },
+        "IpProtocol": "-1",
+        "CidrIp": "172.1.4.0/23"
+      }
+    },
+    "egress23": {
+      "Type": "AWS::EC2::SecurityGroupEgress",
+      "Properties": {
+        "GroupId": {
+          "Ref": "sgkakaoeserviceredis"
+        },
+        "IpProtocol": "-1",
+        "CidrIp": "172.1.6.0/23"
+      }
+    },
+    "egress29": {
+      "Type": "AWS::EC2::SecurityGroupEgress",
+      "Properties": {
+        "GroupId": {
+          "Ref": "sgkakaoeserviceelb"
+        },
+        "IpProtocol": "-1",
+        "CidrIp": "0.0.0.0/0"
+      }
+    },
+    "egress14": {
+      "Type": "AWS::EC2::SecurityGroupEgress",
+      "Properties": {
+        "GroupId": {
+          "Ref": "sgkakaoeserviceecs"
+        },
+        "IpProtocol": "-1",
+        "CidrIp": "0.0.0.0/0"
+      }
+    }
+  }
+}
