@@ -13,8 +13,12 @@ pipeline {
     stage('Submit Stack') {
       steps {
         withAWS(roleAccount:'327173749814', role:'cloudformation') {
-		string status = sh(script: """ aws cloudformation describe-stacks --stack-name vpctestforaven1 --region 'ap-southeast-1' --query 'failures[0].reason' --output text""",returnStdout: true).trim()
-		echo status			
+		if(sh(script: """ aws cloudformation describe-stacks --stack-name vpctestforaven1 --region 'ap-southeast-1' --query 'failures[0].reason' --output text""",returnStdout: true).trim()){
+		  echo 'aaa'
+		}
+		else{
+		  echo 'bbb'
+		}			
 	}
       }
     }
