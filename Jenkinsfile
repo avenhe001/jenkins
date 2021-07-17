@@ -9,6 +9,7 @@ pipeline {
 	}
       }
     }
+	  
     stage(Submit Stack') {
       steps {
         withAWS(roleAccount:'327173749814', role:'cloudformation') {
