@@ -13,9 +13,11 @@ pipeline {
     stage('Submit Stack') {
       steps {
         withAWS(roleAccount:'327173749814', role:'cloudformation') {
-		if (sh 'aws cloudformation describe-stacks --stack-name vpctestforaven --region "ap-southeast-1"'){
-		  sh  "aws cloudformation update-stack --stack-name vpctestforaven --template-body file://VPC/vpc-all-with-no-configuration-parameters.json --region 'ap-southeast-1'"			
-		} 
+		boolen status = sh(script: """ aws cloudformation describe-stacks --stack-name vpctestforaven --region 'ap-southeast-1' """)
+		echo status
+		if(status){
+		  sh  "aws cloudformation update-stack --stack-name vpctestforaven --template-body file://VPC/vpc-all-with-no-configuration-parameters.json --region 'ap-southeast-1'"
+		}
 		else {
 		  sh  "aws cloudformation create-stack --stack-name vpctestforaven --template-body file://VPC/vpc-all-with-no-configuration-parameters.json --region 'ap-southeast-1'"
 		}			
