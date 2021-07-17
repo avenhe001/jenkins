@@ -19,7 +19,6 @@ pipeline {
       steps {
         script {
 		aws cloudformation describe-stacks --stack-name vpctestforaven
-		aws cloudformation update-stack --stack-name vpctestforaven --template-body file://VPC/vpc-all-with-no-configuration-parameters.json --region 'ap-southeast-1'
 	}	      
       }
     }
