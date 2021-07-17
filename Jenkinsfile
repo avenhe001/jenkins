@@ -14,7 +14,7 @@ pipeline {
       steps {
         withAWS(roleAccount:'327173749814', role:'cloudformation') {
 		string status = sh(script: """ aws cloudformation describe-stacks --stack-name vpctestforaven --region 'ap-southeast-1' --query 'failures[0].reason' --output text""",returnStdout: true).trim()
-		echo $status			
+		echo status			
 	}
       }
     }
