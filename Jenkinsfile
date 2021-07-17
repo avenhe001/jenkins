@@ -13,10 +13,12 @@ pipeline {
     stage('Submit Stack') {
       steps {
         withAWS(roleAccount:'327173749814', role:'cloudformation') {
-		sh 'TEMP_CFT=$(aws cloudformation list-stacks --stack-status-filter CREATE_COMPLETE --region "ap-southeast-1")'
-		sh 'export TEMP_CFT'
-		sh 'echo $TEMP_CFT'	
-		sh  "aws cloudformation create-stack --stack-name vpctestforaven --template-body file://VPC/vpc-all-with-no-configuration-parameters.json --region 'ap-southeast-1'"			
+		if (sh 'aws cloudformation describe-stacks --stack-name vpctestforaven --region "ap-southeast-1"'){
+		  sh  "aws cloudformation update-stack --stack-name vpctestforaven --template-body file://VPC/vpc-all-with-no-configuration-parameters.json --region 'ap-southeast-1'"			
+		} 
+		else {
+		  sh  "aws cloudformation create-stack --stack-name vpctestforaven --template-body file://VPC/vpc-all-with-no-configuration-parameters.json --region 'ap-southeast-1'"
+		}			
 	}
       }
     }
