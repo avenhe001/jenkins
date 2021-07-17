@@ -14,9 +14,8 @@ pipeline {
       steps {
         withAWS(roleAccount:'327173749814', role:'cloudformation') {
 	  script{
-		string slackname = sh(script: """ aws cloudformation list-stacks --query 'StackSummaries[*]['StackName']' --stack-status-filter UPDATE_ROLLBACK_COMPLETE CREATE_COMPLETE UPDATE_COMPLETE --region 'ap-southeast-1' --output text""",returnStdout: true).trim()
-		echo slackname
-		sh '$slackname | grep "vpctestforaven"'  
+		string slackname = sh(script: """ aws cloudformation list-stacks --query 'StackSummaries[*]['StackName']' --stack-status-filter UPDATE_ROLLBACK_COMPLETE CREATE_COMPLETE UPDATE_COMPLETE --region 'ap-southeast-1' --output text""",returnStdout: true | grep 'vpctestforaven').trim()
+		echo slackname 
 		if ('vpctestforaven' in slackname ){
 		  sh "aws cloudformation update-stack --stack-name vpctestforaven --template-body file://VPC/vpc-all-with-no-configuration-parameters.json --region 'ap-southeast-1'"
 		}
