@@ -14,7 +14,7 @@ pipeline {
       steps {
         withAWS(roleAccount:'327173749814', role:'cloudformation') {
 		string count = sh(script: """ aws cloudformation list-stacks --stack-status-filter CREATE_COMPLETE --region 'ap-southeast-1' --query 'Volumes[*].StackName' --output text""",returnStdout: true).trim()
-		echo string
+		echo count
 		string status = sh(script: """ aws cloudformation describe-stacks --stack-name vpctestforaven --region 'ap-southeast-1' --query 'failures[0].reason' --output text""",returnStdout: true).trim()			
 	}
       }
