@@ -1,6 +1,94 @@
 {
   "AWSTemplateFormatVersion": "2010-09-09",
-  "Parameters": {      
+  "Parameters": {
+        "ClusterName": {
+            "Type": "String",
+            "Default": "AppLayer",
+            "Description": "Name for the cluster where we will be deploying code to the containers."
+        },	
+	"EcsSecurityGroup": {
+		    "Type": "List<AWS::EC2::SecurityGroup::Id>",
+			"Description": "Select security group in your selected VPC."
+        },
+	"AppTargetGroupName": {
+		    "Type": "String",
+            "Default": "clc-sr-read",
+            "Description": "Target Group Name"
+        },
+        "Environment": {
+	    "Type": "String",
+            "Default": "dev",
+            "Description": "Envirnoment -- 'prod' / 'uat' / 'dev' / 'qa'"
+		},
+	"ECSTaskRoleArn": {
+		    "Type": "String",
+			"Default": "arn:aws:iam::094797525673:role/srohilla-pps-ecstaskexecution-role",
+			"Description": "ECS Task role."
+		},
+	"ECSTaskExecutionRoleArn": {
+		    "Type": "String",
+			"Default": "arn:aws:iam::094797525673:role/srohilla-pps-ecstaskexecution-role",
+			"Description": "ECS Task execution role"
+		},
+        "DesiredCapacity": {
+            "Type": "Number",
+            "Default": "0",
+            "Description": "Number of instances to launch in your ECS cluster."
+        },
+	"MaxSize": {
+            "Type": "Number",
+            "Default": "1",
+            "Description": "Maximum number of instances that can be launched in your ECS cluster."
+        },
+        "ECSCluster": {
+	    "Type": "String",
+		"Default": "AppLayer",
+		"Description": "ECS CLuster App ARN"
+ 	},
+	"ECSServiceName": {
+		"Type": "String",
+		"Default": "clc-sr-read",
+		"Description": "This will be used to create service for ECS cluster - applayer/ciam-node."
+ 	},
+	"ContainerPort": {
+		"Type": "Number",
+		"Default": 443,
+		"Description": "For login/reg-ui - 80, ciam-node - 3001"
+	},
+	"HealthCheckPath": {
+		"Type": "String",
+		"Default": "/health/",
+		"Description": "For login/reg-ui -- '/' and for ciam-node -- '/api/"
+	},
+	"HttpForwardRuleForNginx": {
+		"Type": "String",
+		"Default": "read-sr"
+	},
+	"ALBListenerHttps": {
+		"Type": "String",
+		"Default": "arn:aws:elasticloadbalancing:us-west-2:094797525673:listener/app/business-apps-internal-elb/057a4982808325d9/87de430b5c61e8eb",
+		"Description": "Https ListenerArn, where we want to add the TargetGroup"
+	},
+	"ECRRepositoryName": {
+		"Type": "String",
+		"Default": "clc-view-sr",
+		"Description": "ECR repo name"
+	},
+	"EcrRepoImageArn": {
+	    "Type": "String",
+	    "Default": "094797525673.dkr.ecr.us-west-2.amazonaws.com",
+	    "Description": "ECR repo ARN. <Do not add repo name>"
+	},
+	"EcrRepoArn": {
+	    "Type": "String",
+	    "Default": "094797525673.dkr.ecr.us-west-2.amazonaws.com",
+	    "Description": "ECR repo ARN. <Do not add repo name>"
+	},
+	"ResourceLabelForASGPolicy": {
+	    "Type": "String",
+	    "Default": "app/clc-login-test/9b0e56bc8547c1ba/targetgroup/clc-sr-read/e6eb37c22ca7c572",
+	    "Description": "app/clc-login-test/9b0e56bc8547c1ba/targetgroup/clc-sr-read/e6eb37c22ca7c572"
+	},	  
         "IGDescription": {
             "Description": "IGDescription",
             "Type": "String",
@@ -91,6 +179,15 @@
 	    "Default": "agilent-aws-tst-26-kakao-subnet-public-c",
             "ConstraintDescription": "SubNetPublicC."
         },
+        "ECRRepositoryName": {
+	    "Type": "String",
+	    "Default": "nginxplus"
+	},
+	"ClusterName": {
+	    "Type": "String",
+	    "Default": "agilent-aws-tst-26-kakao-eservice-cluster",
+	    "Description": "Cluster Name."
+	},	  
         "SubNetPublicA": {
             "Description": "SubNetPublicA",
             "Type": "String",
@@ -100,6 +197,185 @@
   },
 
   "Resources": {
+		"EcrRepo":	{
+		    "Type" : "AWS::ECR::Repository",
+		    "Properties" : {
+			    "RepositoryName" : {"Ref": "ECRRepositoryName"},
+			    "Tags" : [{"Key":"stack-id", "Value": {"Ref": "AWS::StackName"}}],
+				"RepositoryPolicyText":
+				{
+		            "Version": "2008-10-17",
+				    "Statement": [
+					    {
+  					        "Sid": "test",
+					        "Effect": "Allow",
+					        "Principal": {
+						        "AWS": [
+						            "arn:aws:iam::327173749814:role/*",
+						            "arn:aws:iam::327173749814:role/srohilla-code-build-execution"
+						        ]
+					        },
+					        "Action": "ecr:*"
+					    }
+                    ]
+                }
+			}
+		},
+		"ECSCluster": {
+			"Type": "AWS::ECS::Cluster",
+			"Properties": {
+				"ClusterName": {
+					"Ref": "ClusterName"
+				},
+				"ClusterSettings": [
+					{
+						"Name": "containerInsights",
+						"Value": "enabled"
+					}
+				],
+				"Tags": [
+					{
+						"Key": "Stack_id",
+						"Value": {
+							"Ref": "AWS::StackName"
+						}
+					},
+					{
+						"Key": "Project",
+						"Value": "Kakao"
+					}
+				]
+			}
+		},
+	"taskdef": {
+            "Type": "AWS::ECS::TaskDefinition",
+	    "DependsOn": ["AppTargetGroup", "ECSALBListenerRuleForTG"],
+            "Properties": {
+                "RequiresCompatibilities": [
+                    "FARGATE"
+                ],
+                "Family": {"Ref": "ECSServiceName"},
+                "ContainerDefinitions": [
+                    {
+                        "Name": {"Ref": "ECSServiceName"},
+                        "Image": {"Ref": "EcrRepoImageArn"},
+                        "Essential": "true",
+                        "PortMappings": [
+                            {
+                                "HostPort": {"Ref": "ContainerPort"},
+                                "Protocol": "tcp",
+                                "ContainerPort": {"Ref": "ContainerPort"}
+                            }
+                        ],
+						"LogConfiguration": {
+							"LogDriver": "awslogs",
+							"Options": {
+								"awslogs-group": {"Fn::Join": ["/",[{"Ref": "ClusterName"}, {"Ref": "ECSServiceName"}]]},
+								"awslogs-region": "us-west-2",
+								"awslogs-stream-prefix": {"Ref": "ECSServiceName"}
+							}
+						},
+						"Environment": [
+							{
+							  "Name": "NODE_ENV",
+							  "Value": {"Ref": "Environment"}
+							},
+							{
+							  "Name": "PORT",
+							  "Value": {"Ref": "ContainerPort"}
+							}
+						]
+					}
+                ],
+                "NetworkMode": "awsvpc",
+                "Memory": "2048",
+                "Cpu": "1024",
+                "TaskRoleArn": {"Ref": "ECSTaskRoleArn"},
+				"ExecutionRoleArn": {"Ref": "ECSTaskExecutionRoleArn"}
+            }
+        },
+        "service": {
+            "Type": "AWS::ECS::Service",
+            "DependsOn": "taskdef",
+            "Properties": {
+		"ServiceName": {"Ref": "ECSServiceName"},
+                "Cluster": {"Ref": "ECSCluster"},
+		"LaunchType": "FARGATE",
+                "DesiredCount": {"Ref": "DesiredCapacity"},
+		"DeploymentConfiguration": {
+				  "MaximumPercent": 200,
+				  "MinimumHealthyPercent": 100
+				},
+                "HealthCheckGracePeriodSeconds": 5,
+                "LoadBalancers": [
+                    {
+                        "ContainerName": {"Ref": "ECSServiceName"},
+                        "ContainerPort": {"Ref": "ContainerPort"},
+                        "TargetGroupArn": {"Ref": "AppTargetGroup"}
+                    }
+                ],
+                "TaskDefinition": {
+                    "Ref": "taskdef"
+                },
+				"NetworkConfiguration" : {
+					"AwsvpcConfiguration" : {
+						"SecurityGroups" : {"Ref": "EcsSecurityGroup"},
+						"Subnets" : {"Ref": "SubnetId"},
+						"AssignPublicIp": "ENABLED"
+					}
+				}
+            }
+        },
+	"AppTargetGroup": {
+            "Type": "AWS::ElasticLoadBalancingV2::TargetGroup",
+            "Properties": {
+                "HealthCheckIntervalSeconds": 10,
+                "HealthCheckPath": {"Ref": "HealthCheckPath"},
+                "HealthCheckProtocol": "HTTPS",
+                "HealthCheckTimeoutSeconds": 5,
+                "HealthyThresholdCount": 2,
+                "Name": {"Ref": "AppTargetGroupName"},
+                "Port": 443,
+                "Protocol": "HTTPS",
+                "UnhealthyThresholdCount": 2,
+                "VpcId": {
+                    "Ref": "VpcId"
+                },
+				"TargetType": "ip"
+            }
+        },
+	"ECSALBListenerRuleForTG": {
+            "Type": "AWS::ElasticLoadBalancingV2::ListenerRule",
+            "Properties": {
+                "Actions": [
+                    {
+                        "Type": "forward",
+                        "TargetGroupArn": {"Ref": "AppTargetGroup"}
+					}
+					
+                ],
+                "Conditions": [
+                    {
+                        "Field": "http-header",
+                        "HttpHeaderConfig" : {
+						    "HttpHeaderName" : "X-App-Name",
+						    "Values" : [ {"Ref": "HttpForwardRuleForNginx" }]
+						}
+                    }
+                ],
+                "ListenerArn": {"Ref": "ALBListenerHttps"},
+                "Priority": 743
+            }
+        },	  
+		"CloudwatchLogsGroup": {
+			"Type": "AWS::Logs::LogGroup",
+			"Properties": {
+				"LogGroupName": {
+					"Ref": "ClusterName"
+				},
+				"RetentionInDays": 14
+			}
+		},	  
    "acl05b7fe6929baa754c": {
       "Type": "AWS::EC2::NetworkAcl",
       "Properties": {
