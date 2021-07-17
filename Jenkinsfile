@@ -17,10 +17,11 @@ pipeline {
     
     stage('Submit Stack') {
       steps {
-        sh 'TEMP_ROLE=$(aws sts assume-role --role-arn arn:aws:iam::327173749814:role/cloudformation --role-session-name test)'
-	sh 'export TEMP_ROLE'
-	sh 'echo $TEMP_ROLE'
-        sh "aws cloudformation create-stack --stack-name vpctestforaven --template-body file://VPC/vpc-all-with-no-configuration-parameters.json --region 'ap-southeast-1'"
+        script {
+		TEMP_ROLE= $(aws cloudformation describe-stacks --stack-name vpctestforaven)
+		echo $TEMP_ROLE
+		aws cloudformation update-stack --stack-name vpctestforaven --template-body file://VPC/vpc-all-with-no-configuration-parameters.json --region 'ap-southeast-1'
+	}	      
       }
     }
   }
