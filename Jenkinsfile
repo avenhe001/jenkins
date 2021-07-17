@@ -18,8 +18,7 @@ pipeline {
     stage('Submit Stack') {
       steps {
         script {
-		TEMP_ROLE= $(aws cloudformation describe-stacks --stack-name vpctestforaven)
-		echo $TEMP_ROLE
+		aws cloudformation describe-stacks --stack-name vpctestforaven
 		aws cloudformation update-stack --stack-name vpctestforaven --template-body file://VPC/vpc-all-with-no-configuration-parameters.json --region 'ap-southeast-1'
 	}	      
       }
