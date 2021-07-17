@@ -9,17 +9,14 @@ pipeline {
 	}
       }
     }
-    stage('Validate') {
-      steps {
-        sh "aws cloudformation validate-template --template-body file://VPC/vpc-all-with-no-configuration-parameters.json --region 'ap-southeast-1'"
-      }
-    }
     
     stage('Submit Stack') {
       steps {
-        script {
+        withAWS(roleAccount:'327173749814', role:'cloudformation') {	      
+          script {
 		aws cloudformation describe-stacks --stack-name vpctestforaven
-	}	      
+	  }
+	}
       }
     }
   }
