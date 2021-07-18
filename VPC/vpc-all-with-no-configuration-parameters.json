@@ -4,97 +4,97 @@
         "IGDescription": {
             "Description": "IGDescription",
             "Type": "String",
-	    "Default": "agilent-aws-tst-26-kakao-vpc-internet-gateway",
+	    "Default": "aven-test-vpc-internet-gateway",
             "ConstraintDescription": "IGDescription."
         },
         "DBSubNetC": {
             "Description": "DBSubNetC",
             "Type": "String",
-	    "Default": "agilent-aws-tst-26-kakao-subnet-db-c",
+	    "Default": "aven-test-subnet-db-c",
             "ConstraintDescription": "DBSubNetC."
         },
         "DBSubNetA": {
             "Description": "DBSubNetA",
             "Type": "String",
-	    "Default": "agilent-aws-tst-26-kakao-subnet-db-a",
+	    "Default": "aven-test-subnet-db-a",
             "ConstraintDescription": "DBSubNetA."
         },
         "RoutePrivateCDescription": {
             "Description": "RoutetablePrivateCDescription",
             "Type": "String",
-	    "Default": "agilent-aws-tst-26-kakao-route-private-c",
+	    "Default": "aven-test-route-private-c",
             "ConstraintDescription": "RoutetablePrivateCDescription."
         },
         "RoutePrivateADescription": {
             "Description": "RoutePrivateADescription",
             "Type": "String",
-	    "Default": "agilent-aws-tst-26-kakao-route-private-a",
+	    "Default": "aven-test-route-private-a",
             "ConstraintDescription": "RoutePrivateADescription."
         },
         "RoutePublicDescription": {
             "Description": "RoutePublicDescription",
             "Type": "String",
-	    "Default": "agilent-aws-tst-26-kakao-route-public",
+	    "Default": "aven-test-route-public",
             "ConstraintDescription": "RoutePublicDescription."
         },
         "NatgatewaypublicADescription": {
             "Description": "NatgatewaypublicADescription",
             "Type": "String",
-	    "Default": "agilent-aws-tst-26-kakao-natgateway-public-a",
+	    "Default": "aven-test-natgateway-public-a",
             "ConstraintDescription": "NatgatewaypublicADescription."
         },
         "NatgatewaypublicCDescription": {
             "Description": "NatgatewaypublicCDescription",
             "Type": "String",
-	    "Default": "agilent-aws-tst-26-kakao-natgateway-public-c",
+	    "Default": "aven-test-natgateway-public-c",
             "ConstraintDescription": "NatgatewaypublicCDescription."
         },
         "SGAuroraGroupDescription": {
             "Description": "SGAuroraGroupDescription",
             "Type": "String",
-	    "Default": "agilent-aws-tst-26-kakao-sg-aurora",
+	    "Default": "aven-test-sg-aurora",
             "ConstraintDescription": "SGAuroraGroupDescription."
         },
         "SGRedisGroupDescription": {
             "Description": "SGRedisGroupDescription",
             "Type": "String",
-	    "Default": "agilent-aws-tst-26-kakao-sg-redis",
+	    "Default": "aven-test-sg-redis",
             "ConstraintDescription": "SGRedisGroupDescription."
         },
         "SGECSGroupDescription": {
             "Description": "SGECSGroupDescription",
             "Type": "String",
-	    "Default": "agilent-aws-tst-26-kakao-sg-ecs",
+	    "Default": "aven-test-sg-ecs",
             "ConstraintDescription": "SGECSGroupDescription."
         },
         "VpcName": {
             "Description": "VpcName",
             "Type": "String",
-	    "Default": "agilent-aws-tst-26-kakao-vpc",
+	    "Default": "aven-test-vpc",
             "ConstraintDescription": "VpcName."
         },
         "SubNetPrivateC": {
             "Description": "SubNetPrivateC",
             "Type": "String",
-	    "Default": "agilent-aws-tst-26-kakao-subnet-private-c",
+	    "Default": "aven-test-subnet-private-c",
             "ConstraintDescription": "SubNetPrivateC."
         },
         "SubNetPrivateA": {
             "Description": "SubNetPrivateA",
             "Type": "String",
-	    "Default": "agilent-aws-tst-26-kakao-subnet-private-a",
+	    "Default": "aven-test-subnet-private-a",
             "ConstraintDescription": "SubNetPrivateA."
         },
         "SubNetPublicC": {
             "Description": "SubNetPublicC",
             "Type": "String",
-	    "Default": "agilent-aws-tst-26-kakao-subnet-public-c",
+	    "Default": "aven-test-subnet-public-c",
             "ConstraintDescription": "SubNetPublicC."
         },
         "SubNetPublicA": {
             "Description": "SubNetPublicA",
             "Type": "String",
-	    "Default": "agilent-aws-tst-26-kakao-subnet-public-a",
+	    "Default": "aven-test-subnet-public-a",
             "ConstraintDescription": "SubNetPublicA."
         }
   },
