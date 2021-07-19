@@ -5,7 +5,7 @@ pipeline {
     stage('Switch Role') {
       steps {
         withAWS(roleAccount:'327173749814', role:'cloudformation') {
-		sh "aws cloudformation validate-template --template-body file://VPC/vpc-all-with-no-configuration-parameters.json --region 'ap-southeast-1'"	
+		sh "aws cloudformation validate-template --template-body file://VPC/vpc-all-with-no-configuration-parameters.json --region 'ap-southeast-1' "	
 	}
       }
     }
