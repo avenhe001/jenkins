@@ -12,15 +12,12 @@ Parameters:
     Description: Unique Auth Name for Cognito Resources
   RoleArn:
     Type: String
-    Default: "arn:aws:iam::860093365199:role/agilent-aws-dev-26-kakao-eservice-ekk-auth-cognito"
     Description: Unique Auth Name for Cognito Resources
   AccessPoliciesPrincipalAWS:
     Type: String
-    Default: arn:aws:iam::860093365199:role/agilent-aws-dev-26-kakao-eservice-ekk-auth-cognito
     Description: Unique Auth Name for Cognito Resources
   AccessPoliciesResource:
     Type: String
-    Default: "arn:aws:es:ap-southeast-1:860093365199:domain/dev-26-kakao-elasticsearch/*"
     Description: Unique Auth Name for Cognito Resources
 Resources:
   ElasticsearchDomain:

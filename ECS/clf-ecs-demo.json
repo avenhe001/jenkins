@@ -1,0 +1,178 @@
+{
+	"AWSTemplateFormatVersion": "2010-09-09",
+	"Parameters": {
+         "VpcId": {
+            "Type": "AWS::EC2::VPC::Id",
+            "Description": "Select a VPC that allows instances to access the Internet. Select same VPC in which LoadBalancer was created."
+        },
+        "SubnetId": {
+            "Type": "List<AWS::EC2::Subnet::Id>",
+            "Description": "Select at two subnets in your selected VPC. Select same Subnets in which LoadBalancer was created."
+        },
+	"EcsSecurityGroup": {
+		    "Type": "List<AWS::EC2::SecurityGroup::Id>",
+			"Description": "Select security group in your selected VPC."
+        },
+		"ECSServiceName": {
+		    "Type": "String",
+			"Default": "ecstasktest",
+			"Description": "This will be used to create service for ECS cluster - applayer/ciam-node."
+ 		},	
+		"ClusterName": {
+			"Type": "String",
+			"Default": "ECS",
+			"Description": "Cluster Name."
+		},
+		"KakaoNotificationServiceName": {
+			"Type": "String",
+			"Default": "ecstasktest",
+			"Description": "ecstasktest service name."
+		},
+		"ECRIamgeForKakaoNotificationARN": {
+			"Type": "String",
+			"Default": "327173749814.dkr.ecr.ap-southeast-1.amazonaws.com/testecr:demo",
+			"Description": "agilent-aws-tst-26-kakao-eservice-instrument ECR image ARN. This will be used to create task for ECS Service - agilent-aws-tst-26-kakao-eservice-instrument."
+		},
+		"ECSTaskRoleArn": {
+			"Type": "String",
+			"Default": "arn:aws:iam::327173749814:role/ecs-task",
+			"Description": "ECS Task role"
+		},
+		"ECSTaskExecutionRoleArn": {
+			"Type": "String",
+			"Default": "arn:aws:iam::327173749814:role/ecs-task",
+			"Description": "ECS Task execution role"
+		},
+		"DesiredCapacity": {
+			"Type": "Number",
+			"Default": "1",
+			"Description": "Number of instances to launch in your ECS cluster."
+		},
+		"Memory": {
+			"Type": "Number",
+			"Default": "512",
+			"Description": "Memory."
+		},
+		"Cpu": {
+			"Type": "Number",
+			"Default": "256",
+			"Description": "Cpu."
+		},
+		"MaxSize": {
+			"Type": "Number",
+			"Default": "1",
+			"Description": "Maximum number of instances that can be launched in your ECS cluster."
+		}
+	},
+	"Resources": {
+		"ECSCluster": {
+			"Type": "AWS::ECS::Cluster",
+			"Properties": {
+				"ClusterName": {
+					"Ref": "ClusterName"
+				},
+				"ClusterSettings": [
+					{
+						"Name": "containerInsights",
+						"Value": "enabled"
+					}
+				],
+				"Tags": [
+					{
+						"Key": "Stack_id",
+						"Value": {
+							"Ref": "AWS::StackName"
+						}
+					},
+					{
+						"Key": "Project",
+						"Value": "Kakao"
+					}
+				]
+			}
+		},
+		"taskdefkakaonotification": {
+			"Type": "AWS::ECS::TaskDefinition",
+			"Properties": {
+				"RequiresCompatibilities": [
+					"FARGATE"
+				],
+				"Family": {
+					"Ref": "KakaoNotificationServiceName"
+				},
+				"ContainerDefinitions": [
+					{
+						"Name": {
+							"Ref": "KakaoNotificationServiceName"
+						},
+						"Image": {
+							"Ref": "ECRIamgeForKakaoNotificationARN"
+						},
+						"Essential": "true",
+						"LogConfiguration": {
+							"LogDriver": "awslogs",
+							"Options": {
+								"awslogs-group": {
+									"Ref": "ClusterName"
+								},
+								"awslogs-region": "ap-northeast-1",
+								"awslogs-stream-prefix": {
+									"Ref": "KakaoNotificationServiceName"
+								}
+							}
+						}
+					}
+				],
+				"NetworkMode": "awsvpc",
+				"Memory": {"Ref": "Memory"},
+				"Cpu": {"Ref": "Cpu"},
+				"TaskRoleArn": {
+					"Ref": "ECSTaskRoleArn"
+				},
+				"ExecutionRoleArn": {
+					"Ref": "ECSTaskExecutionRoleArn"
+				}
+			}
+		},
+        "service": {
+            "Type": "AWS::ECS::Service",
+            "DependsOn": "taskdefkakaonotification",
+            "Properties": {
+		"ServiceName": {"Ref": "ECSServiceName"},
+                "Cluster": {"Ref": "ClusterName"},
+		"LaunchType": "FARGATE",
+                "DesiredCount": 1 ,
+		"DeploymentConfiguration": {
+				  "MaximumPercent": 200,
+				  "MinimumHealthyPercent": 100
+				},
+                "TaskDefinition": {
+                    "Ref": "taskdefkakaonotification"
+                },
+		"NetworkConfiguration" : {
+					"AwsvpcConfiguration" : {
+						"SecurityGroups" : {"Ref": "EcsSecurityGroup"},
+						"Subnets" : {"Ref": "SubnetId"},
+						"AssignPublicIp": "ENABLED"
+					}
+				}
+                        }
+                },
+		"CloudwatchLogsGroup": {
+			"Type": "AWS::Logs::LogGroup",
+			"Properties": {
+				"LogGroupName": {
+					"Ref": "ClusterName"
+				},
+				"RetentionInDays": 14
+			}
+		}
+	},
+	"Outputs": {
+		"ecscluster": {
+			"Value": {
+				"Ref": "ECSCluster"
+			}
+		}
+	}
+}
