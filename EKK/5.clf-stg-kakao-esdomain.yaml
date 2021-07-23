@@ -1,0 +1,60 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: ElasticsearchDomain resource
+Parameters:
+  DomainName:
+    Type: String
+    Description: DomainName
+  IdentityPoolId:
+    Type: String
+    Description: Unique Auth Name for Cognito Resources
+  UserPoolId:
+    Type: String
+    Description: Unique Auth Name for Cognito Resources
+  RoleArn:
+    Type: String
+    Default: "arn:aws:iam::860093365199:role/agilent-aws-dev-26-kakao-eservice-ekk-auth-cognito"
+    Description: Unique Auth Name for Cognito Resources
+  AccessPoliciesPrincipalAWS:
+    Type: String
+    Default: arn:aws:iam::860093365199:role/agilent-aws-dev-26-kakao-eservice-ekk-auth-cognito
+    Description: Unique Auth Name for Cognito Resources
+  AccessPoliciesResource:
+    Type: String
+    Default: "arn:aws:es:ap-southeast-1:860093365199:domain/dev-26-kakao-elasticsearch/*"
+    Description: Unique Auth Name for Cognito Resources
+Resources:
+  ElasticsearchDomain:
+    Type: AWS::Elasticsearch::Domain
+    Properties:
+      DomainName: !Sub ${DomainName}
+      ElasticsearchClusterConfig:
+        InstanceCount: "1"
+        InstanceType: "r5.large.elasticsearch"
+      ElasticsearchVersion: "7.4"  
+      EncryptionAtRestOptions:
+        Enabled : true
+      NodeToNodeEncryptionOptions:
+        Enabled : true
+      EBSOptions:
+        EBSEnabled: true
+        Iops: 0
+        VolumeSize: 10
+        VolumeType: "gp2"
+      SnapshotOptions:
+        AutomatedSnapshotStartHour: "0"
+      CognitoOptions:
+        Enabled: true
+        IdentityPoolId: !Sub ${IdentityPoolId}
+        RoleArn: !Sub ${RoleArn}
+        UserPoolId: !Sub ${UserPoolId}
+      AccessPolicies:
+        Version: "2012-10-17"
+        Statement:
+          -
+            Effect: "Allow"
+            Principal:
+              AWS: !Sub ${AccessPoliciesPrincipalAWS}
+            Action: "es:*"
+            Resource: !Sub ${AccessPoliciesResource}
+      AdvancedOptions:
+        rest.action.multi.allow_explicit_index: true

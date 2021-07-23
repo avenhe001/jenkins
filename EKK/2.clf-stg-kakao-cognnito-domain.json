@@ -1,0 +1,25 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Parameters": {
+        "UserPoolId": {
+            "Description": "UserPoolId",
+            "Type": "String",
+            "ConstraintDescription": "UserPoolId."
+        },
+        "DomainName": {
+            "Description": "DomainName",
+            "Type": "String",
+            "ConstraintDescription": "DomainName."
+        }	
+  },
+  "Resources": {
+    "UserDomain": {
+      "Type" : "AWS::Cognito::UserPoolDomain",
+      "Properties" : {
+          "Domain" : {"Ref": "DomainName"},
+          "UserPoolId" : {"Ref": "UserPoolId"}
+      }
+    }
+  },
+  "Description": ""
+}

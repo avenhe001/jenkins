@@ -1,0 +1,29 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Parameters": {
+        "IdentityPool": {
+            "Description": "IdentityPool",
+            "Type": "String",
+            "ConstraintDescription": "IdentityPool."
+        },
+        "RoleArn": {
+            "Description": "RoleArn",
+            "Type": "String",
+            "ConstraintDescription": "RoleArn."
+        }	
+  },
+  "Resources": {
+   "IdentityPoolRoleAttachment":{
+      "Type":"AWS::Cognito::IdentityPoolRoleAttachment",
+      "Properties":{
+         "IdentityPoolId":{
+            "Ref":"IdentityPool"
+         },
+         "Roles":{
+            "authenticated":{"Ref":"RoleArn"}
+	 }
+      }
+    }
+  },
+  "Description": ""
+}

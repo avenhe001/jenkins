@@ -1,0 +1,37 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Parameters": {
+        "UserPoolId": {
+            "Description": "UserPoolId",
+            "Type": "String",
+            "ConstraintDescription": "UserPoolId."
+        },
+        "UserEmail": {
+            "Description": "UserEmail",
+            "Type": "String",
+            "ConstraintDescription": "UserEmail."
+        },
+        "Username": {
+            "Description": "Username",
+            "Type": "String",
+            "ConstraintDescription": "Username."
+        }	
+  },
+  "Resources": {
+    "AdminUser": {
+        "Type": "AWS::Cognito::UserPoolUser",
+        "Properties": {
+          "DesiredDeliveryMediums" : [ 
+          "EMAIL"
+        ],
+	"Username" : {"Ref": "Username"},
+	"UserPoolId" : {"Ref": "UserPoolId"},      
+	"UserAttributes" : [  
+          {"Name" : "email", "Value" : {"Ref": "UserEmail"} },
+          {"Name" : "email_verified" , "Value" : true }
+        ]
+      }
+    }
+  },
+  "Description": ""
+}

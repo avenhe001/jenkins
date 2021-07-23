@@ -1,0 +1,70 @@
+{
+  "AWSTemplateFormatVersion" : "2010-09-09",
+  "Description" : "Stack for Firehose DeliveryStream S3 Destination.",
+  "Parameters": {
+        "ESDomainARN": {
+            "Description": "ESDomainARN",
+            "Default": "arn:aws:es:ap-northeast-1:860093365199:domain/dev-26-kakao-elasticsearch",
+            "Type": "String",
+            "ConstraintDescription": "Must select a valid DB instance type."
+        },  
+        "DeliveryStreamName": {
+            "Description": "DeliveryStreamName",
+	    "Default": "agilent-aws-dev-26-kakao-kinesis-firehose",
+            "Type": "String",
+            "ConstraintDescription": "DeliveryStreamName"
+        }, 
+        "ESRoleARN": {
+            "Description": "ESRoleARN",
+	    "Default": "arn:aws:iam::860093365199:role/agilent-aws-dev-26-kakao-eservice-kineses-firehose",
+            "Type": "String",
+            "ConstraintDescription": "Must select a valid DB instance type."
+        }, 
+        "BucketARN": {
+            "Description": "BucketARN",
+	    "Default": "arn:aws:s3:::agilent-aws-dev-26-kakao-eservice",
+            "Type": "String",
+            "ConstraintDescription": "BucketARN."
+        }, 
+        "S3RoleARN": {
+            "Description": "S3RoleARN",
+	    "Default": "arn:aws:iam::860093365199:role/agilent-aws-dev-26-kakao-eservice-kineses-firehose",
+            "Type": "String",
+            "ConstraintDescription": "Must select a valid DB instance type."
+        }
+  },
+  "Resources": {
+    "deliverystream": {
+      "Type": "AWS::KinesisFirehose::DeliveryStream",
+      "Properties": {
+        "DeliveryStreamName" : {"Ref": "DeliveryStreamName"},
+	"DeliveryStreamType" : "DirectPut",
+	"ElasticsearchDestinationConfiguration":{
+	  "BufferingHints": {
+            "IntervalInSeconds": 60,
+            "SizeInMBs": 50
+          },
+	  "TypeName" : "",
+	  "DomainARN" : {"Ref": "ESDomainARN"},
+	  "IndexName" : "testavenhe-index",
+	  "IndexRotationPeriod" : "OneHour",
+          "RetryOptions" : {
+	    "DurationInSeconds" : 300
+	  },
+	  "RoleARN" : {"Ref": "ESRoleARN"},
+	  "S3BackupMode" : "FailedDocumentsOnly",
+	  "S3Configuration" : {
+	    "BucketARN" : {"Ref": "BucketARN"},
+	    "BufferingHints":{
+	      "IntervalInSeconds" : 300,
+              "SizeInMBs" : 5
+	    },
+	    "CompressionFormat" : "UNCOMPRESSED",
+	    "ErrorOutputPrefix" : "kakao",
+            "RoleARN" : {"Ref": "S3RoleARN"}
+	  }
+        }
+      }
+    }
+  }
+}
